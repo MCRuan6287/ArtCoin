@@ -3,397 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArtCoin | A Rede Social de Arte Valorizada</title>
+    <title>ArtCoin Pro | Dashboard & Marketplace</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* ================= VARIÁVEIS ================= */
         :root {
-            --bg-color: #0d1117;
-            --panel-bg: rgba(22, 27, 34, 0.95);
-            --text-main: #c9d1d9;
-            --accent: #58a6ff;
-            --comum: #8b949e;
-            --raro: #1f6feb;
-            --epico: #8957e5;
-            --lendario: #d29922;
+            --bg: #010409;
+            --card-bg: #0d1117;
+            --panel: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --accent: #2f81f7;
+            --success: #238636;
+            --danger: #f85149;
+            --gold: #d29922;
+            --purple: #8957e5;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* ================= HEADER ================= */
-        header {
-            position: sticky; top: 0; z-index: 50;
+        /* ================= NAVIGATION ================= */
+        nav {
+            height: 65px; background: rgba(1, 4, 9, 0.8); backdrop-filter: blur(12px);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(13, 17, 23, 0.8);
-            backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 0 25px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 22px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(88, 166, 255, 0.5); }
-        .user-profile { display: flex; align-items: center; gap: 15px; }
-        .wallet { background: #238636; padding: 6px 15px; border-radius: 20px; font-weight: bold; color: white; }
+        .logo-container { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #fff; }
+        .nav-stats { display: flex; gap: 20px; align-items: center; }
+        .stat-badge { background: var(--panel); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 14px; }
 
-        /* ================= MAIN FEED ================= */
-        main { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .feed-grid { display: flex; flex-direction: column; gap: 25px; }
-        
-        .art-card { background: #161b22; border-radius: 16px; overflow: hidden; border: 1px solid #30363d; transition: 0.3s; }
-        .art-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .art-image { width: 100%; aspect-ratio: 1; background: #fff; object-fit: cover; }
-        .art-details { padding: 15px; }
-        
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
-        .badge.comum { background: var(--comum); color: #000; }
-        .badge.raro { background: var(--raro); color: #fff; box-shadow: 0 0 10px var(--raro); }
-        .badge.epico { background: var(--epico); color: #fff; box-shadow: 0 0 15px var(--epico); }
-        .badge.lendario { background: var(--lendario); color: #000; box-shadow: 0 0 25px var(--lendario); }
+        /* ================= DASHBOARD ================= */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
 
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .price-tag { font-size: 22px; color: var(--accent); font-weight: bold; }
-        .btn-buy { background: #238636; color: white; padding: 8px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-buy:disabled { background: #30363d; cursor: not-allowed; color: #8b949e; }
-
-        /* ================= FLOATING ACTION BUTTON (+) ================= */
-        .fab {
-            position: fixed; bottom: 30px; right: 30px; z-index: 90;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: var(--accent); color: #000;
-            font-size: 30px; font-weight: bold; border: none;
-            cursor: pointer; box-shadow: 0 5px 20px rgba(88, 166, 255, 0.4);
-            display: flex; justify-content: center; align-items: center;
-            transition: 0.2s;
-        }
-        .fab:hover { transform: scale(1.1); background: #79c0ff; }
-
-        /* ================= MODAL DO STUDIO (PROFISSIONAL) ================= */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-            z-index: 100; display: none; justify-content: center; align-items: center; padding: 15px;
-        }
-        .modal-overlay.active { display: flex; }
+        .sidebar { position: sticky; top: 95px; height: fit-content; }
+        .profile-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
+        .avatar { width: 80px; height: 80px; background: linear-gradient(45deg, var(--accent), var(--purple)); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; border: 4px solid var(--panel); }
         
-        .studio-panel {
-            background: var(--panel-bg); width: 100%; max-width: 500px;
-            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden; display: flex; flex-direction: column;
-        }
+        .menu-items { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
+        .menu-btn { background: transparent; border: none; color: var(--text); padding: 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; width: 100%; text-align: left; }
+        .menu-btn:hover, .menu-btn.active { background: var(--panel); color: var(--accent); }
 
-        .studio-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #161b22; }
-        .btn-close { background: transparent; border: none; color: #ff7b72; font-size: 16px; cursor: pointer; font-weight: bold; }
+        /* ================= MARKETPLACE & FILTERS ================= */
+        .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
+        .search-input { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; color: white; width: 300px; }
 
-        .canvas-area { background: #e1e4e8; width: 100%; aspect-ratio: 1; position: relative; }
-        canvas { width: 100%; height: 100%; cursor: crosshair; touch-action: none; display: block; }
+        .feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .art-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .art-card:hover { transform: translateY(-8px); border-color: var(--accent); }
+        .art-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; background: #fff; }
+        .art-img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .rarity-tag { position: absolute; top: 12px; left: 12px; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; z-index: 10; }
+        .rarity-lendario { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(210, 153, 34, 0.5); }
+        
+        .card-body { padding: 18px; }
+        .card-user { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; opacity: 0.8; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 15px; }
+        .price-val { font-size: 20px; font-weight: 800; color: var(--accent); }
 
-        .tools-area { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-        
-        .tool-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-        
-        /* Paleta de cores rápida */
-        .color-swatches { display: flex; gap: 8px; }
-        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-        .swatch.active { border-color: #fff; transform: scale(1.1); }
-        
-        .btn-tool { padding: 8px 12px; border-radius: 8px; border: none; background: #30363d; color: white; cursor: pointer; flex: 1; font-weight: bold; }
-        .btn-tool.active { background: var(--accent); color: #000; }
-        
-        input[type="range"] { flex: 1; accent-color: var(--accent); }
+        /* ================= STUDIO MODAL ================= */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .studio-container { background: var(--card-bg); width: 100%; max-width: 1000px; height: 90vh; border-radius: 24px; display: grid; grid-template-columns: 80px 1fr 300px; border: 1px solid var(--border); overflow: hidden; }
 
-        .invest-row { display: flex; gap: 10px; margin-top: 5px; }
-        input[type="number"] { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; outline: none; }
-        .btn-publish { background: var(--lendario); color: #000; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1.5; }
-        
+        .studio-toolbar { background: var(--panel); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-right: 1px solid var(--border); }
+        .tool-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: var(--text); }
+        .tool-icon:hover, .tool-icon.active { background: var(--accent); color: white; }
+
+        .canvas-main { background: #333; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        canvas { background: white; box-shadow: 0 0 50px rgba(0,0,0,0.5); cursor: crosshair; }
+
+        .studio-sidebar { padding: 25px; display: flex; flex-direction: column; gap: 25px; border-left: 1px solid var(--border); }
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .color-opt { width: 100%; aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
+        .color-opt.active { border-color: white; transform: scale(1.1); }
+
+        /* ================= UI ELEMENTS ================= */
+        .btn-primary { background: var(--accent); color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+        .fab { position: fixed; bottom: 35px; right: 35px; width: 65px; height: 65px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(47, 129, 247, 0.4); cursor: pointer; z-index: 100; border: none; }
+
+        /* Toast Notifications */
+        #toast-container { position: fixed; top: 80px; right: 20px; z-index: 9999; }
+        .toast { background: var(--panel); border-left: 4px solid var(--accent); padding: 15px 25px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">ArtCoin</div>
-        <div class="user-profile">
-            <span style="font-weight: 600;">@respaw027</span>
-            <div class="wallet">🪙 <span id="balanceDisplay">1000</span></div>
+    <nav>
+        <div class="logo-container">
+            <i data-lucide="palette"></i> ArtCoin Pro
         </div>
-    </header>
+        <div class="nav-stats">
+            <div class="stat-badge"><i data-lucide="coins" size="16"></i> <span id="balance">1000</span></div>
+            <div class="stat-badge"><i data-lucide="layout" size="16"></i> <span id="artCount">0</span> Artes</div>
+        </div>
+    </nav>
 
-    <main>
-        <div class="feed-grid" id="feedContainer"></div>
-    </main>
-
-    <button class="fab" onclick="app.openStudio()">+</button>
-
-    <div class="modal-overlay" id="studioModal">
-        <div class="studio-panel">
-            <div class="studio-header">
-                <h3>Studio Criativo</h3>
-                <button class="btn-close" onclick="app.closeStudio()">Cancelar</button>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="avatar">R</div>
+                <h3>@respaw027</h3>
+                <p style="font-size: 12px; color: var(--accent); margin-top: 5px;">Colecionador nível 1</p>
+                <div class="menu-items">
+                    <button class="menu-btn active"><i data-lucide="home"></i> Feed Global</button>
+                    <button class="menu-btn"><i data-lucide="heart"></i> Favoritos</button>
+                    <button class="menu-btn"><i data-lucide="user"></i> Minha Galeria</button>
+                    <button class="menu-btn"><i data-lucide="settings"></i> Configurações</button>
+                </div>
             </div>
-            
-            <div class="canvas-area">
-                <canvas id="paintCanvas"></canvas>
+        </aside>
+
+        <main>
+            <div class="filter-bar">
+                <input type="text" class="search-input" placeholder="Pesquisar artes ou artistas...">
+                <div style="display: flex; gap: 10px;">
+                    <select class="search-input" style="width: auto;" onchange="app.filterFeed(this.value)">
+                        <option value="all">Todas Raridades</option>
+                        <option value="lendario">Lendárias</option>
+                        <option value="epico">Épicas</option>
+                        <option value="raro">Raras</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="tools-area">
-                <div class="tool-row">
-                    <div class="color-swatches" id="swatchContainer">
-                        <div class="swatch active" style="background:#000000" onclick="studio.setColor('#000000', this)"></div>
-                        <div class="swatch" style="background:#ff3b30" onclick="studio.setColor('#ff3b30', this)"></div>
-                        <div class="swatch" style="background:#34c759" onclick="studio.setColor('#34c759', this)"></div>
-                        <div class="swatch" style="background:#007aff" onclick="studio.setColor('#007aff', this)"></div>
-                        <div class="swatch" style="background:#ffcc00" onclick="studio.setColor('#ffcc00', this)"></div>
-                        <div class="swatch" style="background:#af52de" onclick="studio.setColor('#af52de', this)"></div>
+            <div class="feed-grid" id="mainFeed">
+                </div>
+        </main>
+    </div>
+
+    <button class="fab" onclick="app.toggleStudio(true)"><i data-lucide="plus" size="32"></i></button>
+
+    <div class="modal" id="studioModal">
+        <div class="studio-container">
+            <div class="studio-toolbar">
+                <div class="tool-icon active" id="tool-brush" onclick="studio.setTool('brush')"><i data-lucide="pen-tool"></i></div>
+                <div class="tool-icon" id="tool-rect" onclick="studio.setTool('rect')"><i data-lucide="square"></i></div>
+                <div class="tool-icon" id="tool-circle" onclick="studio.setTool('circle')"><i data-lucide="circle"></i></div>
+                <div class="tool-icon" id="tool-eraser" onclick="studio.setTool('eraser')"><i data-lucide="eraser"></i></div>
+                <hr style="width: 60%; border: 0.5px solid var(--border);">
+                <div class="tool-icon" onclick="studio.undo()"><i data-lucide="undo-2"></i></div>
+                <div class="tool-icon" onclick="studio.clear()"><i data-lucide="trash-2" style="color:var(--danger)"></i></div>
+            </div>
+
+            <div class="canvas-main">
+                <canvas id="mainCanvas"></canvas>
+            </div>
+
+            <div class="studio-sidebar">
+                <h3>Configurações</h3>
+                
+                <label style="font-size: 13px;">Cor Principal</label>
+                <div class="color-grid" id="colorGrid">
                     </div>
-                    <input type="color" id="customColor" value="#000000" onchange="studio.setColor(this.value, null)" style="width: 35px; height: 35px; border: none; background: transparent; cursor: pointer;">
-                </div>
+                <input type="color" id="customColor" style="width:100%; height:40px; border:none; background:none; cursor:pointer;">
 
-                <div class="tool-row">
-                    <button class="btn-tool active" id="btnPincel" onclick="studio.setMode('brush')">✏️ Pincel</button>
-                    <button class="btn-tool" id="btnBorracha" onclick="studio.setMode('eraser')">🧼 Borracha</button>
-                    <button class="btn-tool" onclick="studio.undo()">↩️ Desfazer</button>
-                    <button class="btn-tool" onclick="studio.clear()" style="flex: 0.5;">🗑️</button>
-                </div>
+                <label style="font-size: 13px;">Tamanho do Pincel / Borda</label>
+                <input type="range" id="sizeRange" min="1" max="50" value="5" style="width:100%;">
 
-                <div class="tool-row">
-                    <span style="font-size: 12px; color: #8b949e;">Tamanho:</span>
-                    <input type="range" id="brushSize" min="1" max="40" value="5">
-                </div>
+                <label style="font-size: 13px;">Opacidade da Camada</label>
+                <input type="range" id="opacityRange" min="1" max="100" value="100" style="width:100%;">
 
-                <div class="invest-row">
-                    <input type="number" id="investInput" placeholder="Moedas (mín 10)">
-                    <button class="btn-publish" onclick="app.publishArt()">Cunhar e Publicar ✨</button>
+                <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <label style="font-size: 13px;">Investimento Mínimo (10)</label>
+                    <input type="number" id="investAmount" class="search-input" style="width:100%; margin: 10px 0;" value="10">
+                    <button class="btn-primary" style="width:100%;" onclick="app.publish()">CUNHAR ARTE</button>
+                    <button class="menu-btn" style="text-align:center; margin-top:10px;" onclick="app.toggleStudio(false)">Descartar</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="toast-container"></div>
+
     <script>
-        class Database {
-            static getBalance() { return parseInt(localStorage.getItem('artcoin_balance')) || 1000; }
-            static setBalance(amount) {
-                localStorage.setItem('artcoin_balance', amount);
-                document.getElementById('balanceDisplay').innerText = amount;
+        // --- BANCO DE DADOS LOCAL ---
+        const db = {
+            get: (key, def) => JSON.parse(localStorage.getItem('artcoin_'+key)) || def,
+            set: (key, val) => localStorage.setItem('artcoin_'+key, JSON.stringify(val)),
+            updateBalance: (val) => {
+                db.set('balance', val);
+                document.getElementById('balance').innerText = val;
             }
-            static getPosts() { return JSON.parse(localStorage.getItem('artcoin_posts')) || []; }
-            static savePost(post) {
-                const posts = this.getPosts();
-                posts.unshift(post);
-                localStorage.setItem('artcoin_posts', JSON.stringify(posts));
-            }
-            static updatePostOwner(postId, newOwner) {
-                let posts = this.getPosts();
-                let post = posts.find(p => p.id === postId);
-                if(post) post.owner = newOwner;
-                localStorage.setItem('artcoin_posts', JSON.stringify(posts));
-            }
-        }
+        };
 
-        class CanvasStudio {
+        // --- MOTOR DO STUDIO ---
+        class Studio {
             constructor() {
-                this.canvas = document.getElementById('paintCanvas');
-                this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+                this.canvas = document.getElementById('mainCanvas');
+                this.ctx = this.canvas.getContext('2d');
                 this.isDrawing = false;
-                this.currentColor = '#000000';
-                this.mode = 'brush'; // brush ou eraser
-                
-                // Sistema de Histórico (Undo)
+                this.tool = 'brush'; // brush, rect, circle, eraser
+                this.color = '#000000';
                 this.history = [];
-                this.historyStep = -1;
-
-                this.setupEvents();
-            }
-
-            // Inicializa o tamanho real do canvas (precisa ser chamado quando o modal abre)
-            resize() {
-                const rect = this.canvas.parentElement.getBoundingClientRect();
-                this.canvas.width = rect.width;
-                this.canvas.height = rect.height;
-                this.ctx.lineJoin = 'round';
-                this.ctx.lineCap = 'round';
-                this.clear();
-            }
-
-            setupEvents() {
-                this.canvas.addEventListener('mousedown', (e) => this.startPosition(e));
-                this.canvas.addEventListener('mouseup', () => this.endPosition());
-                this.canvas.addEventListener('mousemove', (e) => this.draw(e));
                 
-                this.canvas.addEventListener('touchstart', (e) => this.startPosition(e.touches[0]));
-                this.canvas.addEventListener('touchend', () => this.endPosition());
-                this.canvas.addEventListener('touchmove', (e) => { e.preventDefault(); this.draw(e.touches[0]); }, { passive: false });
+                this.init();
             }
 
-            saveState() {
-                this.historyStep++;
-                if (this.historyStep < this.history.length) { this.history.length = this.historyStep; }
-                this.history.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+            init() {
+                this.canvas.width = 600;
+                this.canvas.height = 600;
+                this.ctx.fillStyle = "white";
+                this.ctx.fillRect(0, 0, 600, 600);
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+
+                const events = [
+                    ['mousedown', this.start.bind(this)],
+                    ['mousemove', this.draw.bind(this)],
+                    ['mouseup', this.stop.bind(this)],
+                    ['touchstart', (e) => this.start(e.touches[0])],
+                    ['touchmove', (e) => { e.preventDefault(); this.draw(e.touches[0]); }],
+                    ['touchend', this.stop.bind(this)]
+                ];
+                events.forEach(([ev, fn]) => this.canvas.addEventListener(ev, fn));
+                this.saveHistory();
+            }
+
+            setTool(t) {
+                this.tool = t;
+                document.querySelectorAll('.tool-icon').forEach(i => i.classList.remove('active'));
+                document.getElementById('tool-'+t).classList.add('active');
+            }
+
+            saveHistory() {
+                if(this.history.length > 20) this.history.shift();
+                this.history.push(this.ctx.getImageData(0, 0, 600, 600));
             }
 
             undo() {
-                if (this.historyStep > 0) {
-                    this.historyStep--;
-                    this.ctx.putImageData(this.history[this.historyStep], 0, 0);
-                } else if (this.historyStep === 0) {
-                    this.historyStep = -1;
-                    this.clear(false); // Limpa sem salvar no histórico
+                if(this.history.length > 1) {
+                    this.history.pop();
+                    this.ctx.putImageData(this.history[this.history.length - 1], 0, 0);
                 }
             }
 
-            setMode(mode) {
-                this.mode = mode;
-                document.getElementById('btnPincel').classList.toggle('active', mode === 'brush');
-                document.getElementById('btnBorracha').classList.toggle('active', mode === 'eraser');
-            }
-
-            setColor(color, element) {
-                this.currentColor = color;
-                this.setMode('brush');
-                
-                // Atualiza UI dos swatches
-                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-                if(element) element.classList.add('active');
-            }
-
-            startPosition(e) {
+            start(e) {
                 this.isDrawing = true;
-                this.draw(e);
+                this.startX = this.getPos(e).x;
+                this.startY = this.getPos(e).y;
+                this.snapshot = this.ctx.getImageData(0, 0, 600, 600);
             }
 
-            endPosition() {
+            getPos(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                return { 
+                    x: (e.clientX - rect.left) * (this.canvas.width / rect.width),
+                    y: (e.clientY - rect.top) * (this.canvas.height / rect.height)
+                };
+            }
+
+            draw(e) {
+                if(!this.isDrawing) return;
+                const pos = this.getPos(e);
+                const size = document.getElementById('sizeRange').value;
+                const opacity = document.getElementById('opacityRange').value / 100;
+                
+                this.ctx.globalAlpha = opacity;
+                this.ctx.lineWidth = size;
+                this.ctx.strokeStyle = this.tool === 'eraser' ? 'white' : this.color;
+                this.ctx.fillStyle = this.color;
+
+                if(this.tool === 'brush' || this.tool === 'eraser') {
+                    this.ctx.lineTo(pos.x, pos.y);
+                    this.ctx.stroke();
+                } else {
+                    this.ctx.putImageData(this.snapshot, 0, 0);
+                    this.ctx.beginPath();
+                    if(this.tool === 'rect') this.ctx.strokeRect(this.startX, this.startY, pos.x - this.startX, pos.y - this.startY);
+                    if(this.tool === 'circle') {
+                        let r = Math.sqrt(Math.pow(pos.x - this.startX, 2) + Math.pow(pos.y - this.startY, 2));
+                        this.ctx.arc(this.startX, this.startY, r, 0, 2 * Math.PI);
+                        this.ctx.stroke();
+                    }
+                }
+            }
+
+            stop() {
                 if(this.isDrawing) {
                     this.ctx.beginPath();
-                    this.saveState(); // Salva estado após terminar o traço
+                    this.saveHistory();
                 }
                 this.isDrawing = false;
             }
 
-            draw(e) {
-                if (!this.isDrawing) return;
-                const rect = this.canvas.getBoundingClientRect();
-                const scaleX = this.canvas.width / rect.width;
-                const scaleY = this.canvas.height / rect.height;
-                
-                this.ctx.lineWidth = document.getElementById('brushSize').value;
-                
-                if (this.mode === 'eraser') {
-                    this.ctx.strokeStyle = '#ffffff'; // Fundo branco
-                } else {
-                    this.ctx.strokeStyle = this.currentColor;
-                }
-
-                this.ctx.lineTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
-                this.ctx.stroke();
-                this.ctx.beginPath();
-                this.ctx.moveTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
+            clear() {
+                this.ctx.fillStyle = "white";
+                this.ctx.fillRect(0, 0, 600, 600);
+                this.saveHistory();
             }
-
-            clear(saveHistory = true) {
-                this.ctx.fillStyle = "#ffffff";
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                if (saveHistory) {
-                    this.history = [];
-                    this.historyStep = -1;
-                }
-            }
-
-            getImageData() { return this.canvas.toDataURL('image/jpeg', 0.9); }
         }
 
-        class ArtCoinApp {
-            constructor() {
-                this.currentUser = "@respaw027";
-                Database.setBalance(Database.getBalance());
-                this.loadFeed();
-            }
+        // --- LÓGICA DO APP ---
+        const app = {
+            init() {
+                lucide.createIcons();
+                this.renderFeed();
+                this.setupColors();
+                db.updateBalance(db.get('balance', 1000));
+            },
 
-            openStudio() {
-                document.getElementById('studioModal').classList.add('active');
-                setTimeout(() => studio.resize(), 50); // Garante que o canvas pegue o tamanho certo
-            }
+            toast(msg, type="info") {
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.innerText = msg;
+                document.getElementById('toast-container').appendChild(t);
+                setTimeout(() => t.remove(), 3000);
+            },
 
-            closeStudio() {
-                document.getElementById('studioModal').classList.remove('active');
-            }
+            setupColors() {
+                const colors = ['#000', '#fff', '#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#4285F4', '#aa66cc', '#2e2e2e'];
+                const grid = document.getElementById('colorGrid');
+                colors.forEach(c => {
+                    const d = document.createElement('div');
+                    d.className = 'color-opt';
+                    d.style.background = c;
+                    d.onclick = () => { studio.color = c; document.getElementById('customColor').value = c; };
+                    grid.appendChild(d);
+                });
+                document.getElementById('customColor').oninput = (e) => studio.color = e.target.value;
+            },
 
-            publishArt() {
-                const investInput = document.getElementById('investInput');
-                const investAmount = parseInt(investInput.value);
-                const currentBalance = Database.getBalance();
+            toggleStudio(show) {
+                document.getElementById('studioModal').classList.toggle('active', show);
+            },
 
-                if (isNaN(investAmount) || investAmount < 10) { alert("Mínimo de 10 moedas para cunhar arte."); return; }
-                if (investAmount > currentBalance) { alert("Moedas insuficientes na carteira!"); return; }
+            publish() {
+                const amount = parseInt(document.getElementById('investAmount').value);
+                const bal = db.get('balance', 1000);
 
-                Database.setBalance(currentBalance - investAmount);
+                if(amount < 10 || isNaN(amount)) return this.toast("Mínimo 10 ArtCoins", "danger");
+                if(amount > bal) return this.toast("Saldo insuficiente!", "danger");
+
+                db.updateBalance(bal - amount);
 
                 let rarity = "comum";
-                let borderColor = "var(--comum)";
-                if (investAmount >= 1000) { rarity = "lendario"; borderColor = "var(--lendario)"; }
-                else if (investAmount >= 300) { rarity = "epico"; borderColor = "var(--epico)"; }
-                else if (investAmount >= 50) { rarity = "raro"; borderColor = "var(--raro)"; }
+                if(amount >= 1000) rarity = "lendario";
+                else if(amount >= 250) rarity = "epico";
+                else if(amount >= 50) rarity = "raro";
 
-                const newPost = {
-                    id: Date.now().toString(),
-                    image: studio.getImageData(),
-                    creator: this.currentUser,
-                    owner: this.currentUser,
+                const newArt = {
+                    id: Date.now(),
+                    img: studio.canvas.toDataURL('image/jpeg', 0.8),
+                    creator: '@respaw027',
                     rarity: rarity,
-                    borderColor: borderColor,
-                    invested: investAmount,
-                    price: Math.floor(investAmount * 1.5)
+                    price: Math.floor(amount * 1.5)
                 };
 
-                Database.savePost(newPost);
-                investInput.value = '';
-                this.closeStudio();
-                this.loadFeed();
-            }
+                const arts = db.get('arts', []);
+                arts.unshift(newArt);
+                db.set('arts', arts);
 
-            buyArt(postId, price) {
-                const currentBalance = Database.getBalance();
-                if (currentBalance < price) { alert("Saldo insuficiente!"); return; }
+                this.toggleStudio(false);
+                this.renderFeed();
+                this.toast(`Obra ${rarity} publicada com sucesso!`);
+            },
 
-                Database.setBalance(currentBalance - price);
-                Database.updatePostOwner(postId, this.currentUser);
-                this.loadFeed();
-            }
+            renderFeed(filter = "all") {
+                const container = document.getElementById('mainFeed');
+                container.innerHTML = '';
+                const arts = db.get('arts', []);
+                document.getElementById('artCount').innerText = arts.length;
 
-            loadFeed() {
-                const feedContainer = document.getElementById('feedContainer');
-                feedContainer.innerHTML = '';
-                const posts = Database.getPosts();
+                arts.forEach(art => {
+                    if(filter !== 'all' && art.rarity !== filter) return;
 
-                if(posts.length === 0) {
-                    feedContainer.innerHTML = `<p style="text-align:center; color:#8b949e; margin-top:50px;">O feed está vazio. Clique no botão + para criar a primeira arte!</p>`;
-                    return;
-                }
-
-                posts.forEach(post => {
-                    const isOwner = post.owner === this.currentUser;
                     const card = document.createElement('div');
-                    card.className = `art-card`;
-                    card.style.borderColor = post.borderColor;
-                    
+                    card.className = 'art-card';
                     card.innerHTML = `
-                        <div style="padding: 15px; border-bottom: 1px solid #30363d;">
-                            <span style="font-weight: bold; color: #fff;">${post.creator}</span>
-                            <span style="color: #8b949e; font-size: 14px;"> cunhou esta arte</span>
+                        <div class="art-img-wrapper">
+                            <span class="rarity-tag rarity-${art.rarity}">${art.rarity}</span>
+                            <img src="${art.img}" class="art-img">
                         </div>
-                        <img src="${post.image}" class="art-image">
-                        <div class="art-details">
-                            <span class="badge ${post.rarity}">${post.rarity}</span>
-                            <p style="font-size: 14px; margin-bottom: 10px;">Dono atual: <b>${isOwner ? 'Você' : post.owner}</b></p>
-                            
-                            <div class="price-row">
-                                <div class="price-tag">🪙 ${post.price}</div>
-                                <button class="btn-buy" ${isOwner ? 'disabled' : ''} onclick="app.buyArt('${post.id}', ${post.price})">
-                                    ${isOwner ? 'Adquirido' : 'Comprar'}
-                                </button>
+                        <div class="card-body">
+                            <div class="card-user"><i data-lucide="user" size="14"></i> ${art.creator}</div>
+                            <div class="card-footer">
+                                <div class="price-val">🪙 ${art.price}</div>
+                                <button class="btn-primary" style="padding: 6px 12px; font-size: 12px;">Comprar</button>
                             </div>
                         </div>
                     `;
-                    feedContainer.appendChild(card);
+                    container.appendChild(card);
                 });
-            }
-        }
+                lucide.createIcons();
+            },
 
-        const studio = new CanvasStudio();
-        const app = new ArtCoinApp();
+            filterFeed(val) {
+                this.renderFeed(val);
+            }
+        };
+
+        const studio = new Studio();
+        app.init();
     </script>
 </body>
 </html>
